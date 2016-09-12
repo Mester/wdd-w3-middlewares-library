@@ -1,3 +1,7 @@
+from library.models import RequestLog
+from django.utils import timezone
+
+
 class RequestLoggingMiddleware(object):
     """
     Logs each request as a RequestLog model instance. The model will contain
@@ -7,10 +11,22 @@ class RequestLoggingMiddleware(object):
     """
 
     def process_request(self, request):
-        pass
+        request.timestamp = timezone.now()
 
     def process_response(self, request, response):
-        pass
+        log = RequestLog.objects.create(
+            method=request.method,
+            code=response.status_code,
+            url=request.path,
+            full_url=request.get_full_path(),
+            ip=request.META.get('REMOTE_ADDR'),
+            get_params=request.GET.dict(),
+            user_agent=request.META.get('HTTP_USER_AGENT'),
+            query_count=0,  # I don't know what this is for
+            timestamp=request.timestamp,
+            duration_in_seconds=int((timezone.now() - request.timestamp).total_seconds()),
+        )
+        return response
 
 
 class SSLRedirectMiddleware(object):
