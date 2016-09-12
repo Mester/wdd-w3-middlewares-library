@@ -46,5 +46,11 @@ class RequestLogMiddlewareTestCase(TestCase):
         assert log.code == 302
         assert log.method == 'GET'
 
-        # print(model_to_dict(RequestLog.objects.first()))
-        # assert 0
+    def test_post(self):
+        assert RequestLog.objects.count() == 0
+
+        self.client.post('/login/', {'username': self.user.username, 'password': 'abc123'})
+
+        assert RequestLog.objects.first().method == 'POST'
+
+
