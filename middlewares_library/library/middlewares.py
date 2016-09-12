@@ -34,7 +34,8 @@ class SSLRedirectMiddleware(object):
     If the request is not using HTTPS, redirects to the same URL but
     using HTTPS.
     """
-    pass
+    def process_request(self, request):
+        print(request.scheme)
 
 
 class WWWRedirectMiddleware(object):

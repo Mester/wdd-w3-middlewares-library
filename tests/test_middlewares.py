@@ -54,3 +54,11 @@ class RequestLogMiddlewareTestCase(TestCase):
         assert RequestLog.objects.first().method == 'POST'
 
 
+class SSLRedirectMiddlewareTestCase(TestCase):
+    def test_should_redirect(self):
+        response = self.client.get('/admin/login/', secure=False)
+        assert response.status_code == 302
+
+    def test_should_not_redirect(self):
+        response = self.client.get('/admin/login/', secure=True)
+        assert response.status_code != 302
