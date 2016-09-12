@@ -52,6 +52,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'library.middlewares.RequestLoggingMiddleware',
+    'library.middlewares.SSLRedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'middlewares_library.urls'

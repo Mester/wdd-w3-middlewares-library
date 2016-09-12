@@ -1,5 +1,6 @@
 from library.models import RequestLog
 from django.utils import timezone
+from django.http import HttpResponseRedirect
 
 
 class RequestLoggingMiddleware(object):
@@ -14,6 +15,8 @@ class RequestLoggingMiddleware(object):
         request.timestamp = timezone.now()
 
     def process_response(self, request, response):
+        # if not hasattr(request, 'timestamp'):
+        #     return response
         log = RequestLog.objects.create(
             method=request.method,
             code=response.status_code,
@@ -34,8 +37,10 @@ class SSLRedirectMiddleware(object):
     If the request is not using HTTPS, redirects to the same URL but
     using HTTPS.
     """
+
     def process_request(self, request):
-        print(request.scheme)
+        if not request.is_secure():
+            return HttpResponseRedirect('{}:/{}'.format('https', request.get_full_path()))
 
 
 class WWWRedirectMiddleware(object):

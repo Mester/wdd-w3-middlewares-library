@@ -20,7 +20,7 @@ class RequestLogMiddlewareTestCase(TestCase):
         self.assertEqual(RequestLog.objects.count(), 0)
         self.client.login(username=self.user.username, password='abc123')
         params = {'foo': 'bar'}
-        self.client.get('/admin/', params, follow=True)
+        self.client.get('/admin/', params, follow=True, secure=True)
 
         # Postconditions
         self.assertEqual(RequestLog.objects.count(), 1)
@@ -39,7 +39,7 @@ class RequestLogMiddlewareTestCase(TestCase):
     def test_failed_login(self):
         assert RequestLog.objects.count() == 0
         self.client.login(username='nobody', password='invalid')
-        self.client.get('/admin/', {'foo': 'bar'}, follow=False)
+        self.client.get('/admin/', {'foo': 'bar'}, follow=False, secure=True)
 
         assert RequestLog.objects.count() == 1
         log = RequestLog.objects.first()
@@ -49,7 +49,7 @@ class RequestLogMiddlewareTestCase(TestCase):
     def test_post(self):
         assert RequestLog.objects.count() == 0
 
-        self.client.post('/login/', {'username': self.user.username, 'password': 'abc123'})
+        self.client.post('/login/', {'username': self.user.username, 'password': 'abc123'}, secure=True)
 
         assert RequestLog.objects.first().method == 'POST'
 
